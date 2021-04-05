@@ -79,8 +79,18 @@ class CursoViewSet(viewsets.ModelViewSet):
     # detail=True, é para que ele crie a rota de avaliações
     # methods=['get'] corresponde por qul tipo de método que este recuros pode ser acessado
     @action(detail=True, methods=['get'])
-    def avaliacoes(selfs, request, pk=None):
-        curso = selfs.get_object()  # pegando o curso selcionado
+    def avaliacoes(self, request, pk=None):
+
+        # temos que colocar aqui a paginaçaõ de forma manual
+        self.pagination_class.page_size = 2
+        avaliacoes = Avaliacao.objects.filter(curso_id=pk)
+        page = self.paginate_queryset(avaliacoes)
+
+        if page is not None:
+            serializer = AvaliacaoSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        curso = self.get_object()  # pegando o curso selcionado
         serializer = AvaliacaoSerializer(curso.avaliacoes.all(), many=True)
         return Response(serializer.data)
 

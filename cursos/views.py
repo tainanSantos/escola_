@@ -1,9 +1,13 @@
+from pip._vendor.distro import version
 from rest_framework import generics
 from rest_framework.generics import get_object_or_404
 
+from rest_framework import viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
 from .models import Curso, Avaliacao
 from .serializers import CursoSerializer, AvaliacaoSerializer
-
 
 # class CursoAPIView(generics.ListCreateAPIView):
 #     queryset = Curso.objects.all()
@@ -14,11 +18,17 @@ from .serializers import CursoSerializer, AvaliacaoSerializer
 #     queryset = Avaliacao.objects.all()
 #     serializer_class = AvaliacaoSerializer
 
+"""
+API V1
+"""
+
 
 # criar e buscar todos
 class CursosAPIView(generics.ListCreateAPIView):
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
+
+
 
 
 # buscar um, editar um e deletar um
@@ -54,3 +64,28 @@ class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
             return get_object_or_404(self.get_queryset(), curso_id=self.kwargs.get('curso_pk'),
                                      pk=self.kwargs.get('avaliacao_pk'))
         return get_object_or_404(self.get_queryset(), pk=self.kwargs.get('avaliacao_pk'))
+
+
+"""
+API V2
+"""
+
+
+class CursoViewSet(viewsets.ModelViewSet):
+    queryset = Curso.objects.all()
+    serializer_class = CursoSerializer
+
+    # aqui estamos criando um naova rota para avaliações
+    # e trazendo todas as avaliações do curso selecioando
+    # detail=True, é para que ele crie a rota de avaliações
+    # methods=['get'] corresponde por qul tipo de método que este recuros pode ser acessado
+    @action(detail=True, methods=['get'])
+    def avaliacoes(selfs, request, pk=None):
+        curso = selfs.get_object()  # pegando o curso selcionado
+        serializer = AvaliacaoSerializer(curso.avaliacoes.all(), many=True)
+        return Response(serializer.data)
+
+
+class AvaliacaoViewSet(viewsets.ModelViewSet):
+    queryset = Avaliacao.objects.all()
+    serializer_class = AvaliacaoSerializer

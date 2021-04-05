@@ -16,7 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# importando a router criada na aplicacao cursos
+from cursos.urls import router
+
 urlpatterns = [
+
+    path('api/v2/', include(router.urls)),  # incluido para a api v2
+
     path('api/v1/', include('cursos.urls')),
     path('admin/', admin.site.urls),
     path('auth/', include('rest_framework.urls')),

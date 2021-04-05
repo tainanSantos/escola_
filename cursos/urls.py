@@ -1,6 +1,15 @@
 from django.urls import path
 
-from .views import CursoAPIView, AvaliacaoAPIView, AvaliacoesAPIView, CursosAPIView
+from rest_framework.routers import SimpleRouter
+
+from .views import CursoAPIView, AvaliacaoAPIView, AvaliacoesAPIView, CursosAPIView, CursoViewSet,AvaliacaoViewSet
+
+# registrado as rotas de acesso as viewSets criadas
+# SimpleRouter só vai gerar as operações CRUDs comuns de um único módulo
+# Logo não é possível acessar http://127.0.0.1:8000/api/v2/cursos/1/avaliacoes
+router = SimpleRouter()
+router.register('cursos', CursoViewSet)
+router.register('avaliacoes', AvaliacaoViewSet)
 
 urlpatterns = [
     path('cursos/', CursosAPIView.as_view(), name='cursos'),

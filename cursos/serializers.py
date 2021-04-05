@@ -24,6 +24,19 @@ class AvaliacaoSerializer(serializers.ModelSerializer):
 
 
 class CursoSerializer(serializers.ModelSerializer):
+
+    # read_only=True dados disponíveis so no get
+
+    # Nest Relationship
+    # avaliacoes = AvaliacaoSerializer(many=True, read_only=True)
+
+    # HyperLinked related Field
+    # avaliacoes = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='avaliacao-detail')
+
+    # Primary Key Related Field
+    avaliacoes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+
     class Meta:
         model = Curso
         fields = (
@@ -31,5 +44,6 @@ class CursoSerializer(serializers.ModelSerializer):
             'titulo',
             'url',
             'criacao',
-            'ativo'
+            'ativo',
+            'avaliacoes'
         )

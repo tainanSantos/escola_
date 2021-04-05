@@ -22,6 +22,7 @@ class CursoAPIView(APIView):
         serializer = CursoSerializer(cursos, many=True)
         return Response(serializer.data)
 
+
     def post(self, request):
         serializer = CursoSerializer(data=request.data)
         # se os dados forem inválidos ele já para aqui e lança uma exception
